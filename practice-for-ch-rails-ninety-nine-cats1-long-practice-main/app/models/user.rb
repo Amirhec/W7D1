@@ -20,7 +20,7 @@ class User < ApplicationRecord
     end
 
     def self.find_by_credentials(username, password)
-        @user = User.find(params[:user][:username], params[:user][:password])
+        @user = User.find_by(username: username, password: password)
         if @user && @user.is_password?(password)
             return @user
         else
