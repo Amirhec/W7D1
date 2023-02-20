@@ -4,6 +4,8 @@ class User < ApplicationRecord
 
     validates :password, length: {minimum: 6}
 
+    before_validation :ensure_session_token
+
     attr_reader :password
 
     def password=(pw)
@@ -29,7 +31,7 @@ class User < ApplicationRecord
     def generate_unique_session_token
         token = SecureRandom::urlsafe_base64 
 
-        while User.exist?(session_token: token)
+        while User.exists?(session_token: token)
             token = SecureRandom::urlsafe_base64 
         end
 
@@ -37,15 +39,13 @@ class User < ApplicationRecord
     end
 
     def reset_session_token!
-        @session_token = generate_unique_session_token 
+        self.session_token = generate_unique_session_token 
         self.save!
-        return @session_token
+        return self.session_token
     end
 
     def ensure_session_token
-        @session_token||= generate_unique_session_token 
-
+        self.session_token ||= generate_unique_session_token 
     end
-
 
 end
