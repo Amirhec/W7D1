@@ -26,5 +26,26 @@ class User < ApplicationRecord
         end
     end
 
+    def generate_unique_session_token
+        token = SecureRandom::urlsafe_base64 
+
+        while User.exist?(session_token: token)
+            token = SecureRandom::urlsafe_base64 
+        end
+
+       return token
+    end
+
+    def reset_session_token!
+        @session_token = generate_unique_session_token 
+        self.save!
+        return @session_token
+    end
+
+    def ensure_session_token
+        @session_token||= generate_unique_session_token 
+
+    end
+
 
 end
